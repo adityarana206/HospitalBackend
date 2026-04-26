@@ -25,17 +25,17 @@ app.use(express.json());
 
 // --- CLOUDINARY CONFIGURATION ---
 cloudinary.config({ 
-  cloud_name: 'dqljwkiyo', 
-  api_key: '618767924698894', 
-  api_secret: '3f6RXKXfkowH-cHV9n_PSsvp5Js' 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 app.use(fileUpload({ useTempFiles: true })); // Required to handle image files
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Razorpay Initialization
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_eWbSbu5AuEM5Ey', 
-  key_secret: 'tBff6amDLXeNGSEphKN81tfZ',
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // --- PAYMENT ROUTES ---
@@ -63,7 +63,7 @@ app.post('/api/create-order', async (req, res) => {
 app.post('/api/verify-payment', (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
   
-  const hmac = crypto.createHmac('sha256', 'tBff6amDLXeNGSEphKN81tfZ');
+  const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
   hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
   const generatedSignature = hmac.digest('hex');
 
